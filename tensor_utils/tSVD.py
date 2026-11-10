@@ -91,19 +91,11 @@ def tSVD_approx(A, k = 0):
     
     for i in range(n3):
         A1 = A[:,:,i]
-        if full == True:
-            U1, S1, V1 = torch.svd(A1)
-        else:
-#             U1, S1, V1 = torch.svd(A1)
-#             U1 = U1[:,:k]
-#             S1 = S1[:k]
-#             V1 = V1[:,:k]
-            U1, S1, V1 = tl.truncated_svd(A1, n_eigenvecs=k)
-        A2 = U1.type(torch.float)@(torch.diag(S1.type(torch.float))@V1.type(torch.float))
-        
-        Aout[:,:,i] = A2
+        # faces are complex after the FFT: keep them complex (casting to float drops the imaginary part)
+        U1, S1, Vh1 = torch.linalg.svd(A1, full_matrices=False)
+        U1, S1, Vh1 = U1[:, :k], S1[:k], Vh1[:k, :]
+        Aout[:,:,i] = (U1 * S1.to(U1.dtype)) @ Vh1
 
-        
     Aout = torch.fft.ifft(Aout, dim = 2)
  
     return Aout.type(torch.float)

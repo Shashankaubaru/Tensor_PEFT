@@ -32,4 +32,4 @@ for i in ranks:
     print(err[j])
     j =j+1
 
-torch.save(err, 'errorsQ.pt')
+torch.save(err, 'errors_tsvd_dct.pt')

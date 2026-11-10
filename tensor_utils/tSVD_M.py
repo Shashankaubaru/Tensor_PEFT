@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-from tensor_utils import modek_product
+from .modek_product import modek_product
 import tensorly as tl
 tl.set_backend('pytorch')
 
@@ -36,7 +36,7 @@ def tSVD_M(A,M,k = 0):
     
     if k ==0:
         full = True
-        k = np.min(n1,n2)
+        k = np.minimum(n1,n2)
     else:
         full = False
 
@@ -46,17 +46,12 @@ def tSVD_M(A,M,k = 0):
     V = torch.zeros((n2, k, n3), dtype=torch.float)
     for i in range(n3):
         A1 = A[:,:,i]
-        if full == True:
-            U1, S1, V1 = torch.svd(A1)
-        else:
-            U1, S1, V1 = torch.svd(A1)
-            U1 = U1[:,:k]
-            S1 = S1[:k]
-            V1 = V1[:,:k]
- #           U1, S1, V1 = tl.truncated_svd(A1, n_eigenvecs=k)
-        U[:,:,i] = U1
-        S[:,:,i] = torch.diag(S1)
-        V[:,:,i] = V1
+        # torch.linalg.svd returns Vh (rows are right sing. vecs), matching tl.truncated_svd
+        U1, S1, Vh1 = torch.linalg.svd(A1, full_matrices=False)
+        U1, S1, Vh1 = U1[:, :k], S1[:k], Vh1[:k, :]
+        U[:, :, i] = U1
+        S[:, :, i] = torch.diag(S1)
+        V[:, :, i] = Vh1.T          # store V, not Vh, for compatibility with the rest of tSVD_M
         
     U = modek_product(U, M, k=2, inverse= True)
     S = modek_product(S, M, k=2, inverse= True)
@@ -87,7 +82,7 @@ def tSVD_M_approx(A,M,k = 0):
     
     if k ==0:
         full = True
-        k = np.min(n1,n2)
+        k = np.minimum(n1,n2)
     else:
         full = False
 
@@ -97,7 +92,7 @@ def tSVD_M_approx(A,M,k = 0):
     for i in range(n3):
         A1 = A[:,:,i]
         if full == True:
-            U1, S1, V1 = torch.svd(A1)
+            U1, S1, V1 = torch.linalg.svd(A1, full_matrices=False)  # V1 is Vh, as returned by tl.truncated_svd
         else:
 #             U1, S1, V1 = torch.svd(A1)
 #             U1 = U1[:,:k]
@@ -109,8 +104,10 @@ def tSVD_M_approx(A,M,k = 0):
         Aout[:,:,i] = A2
         
     Aout = modek_product(Aout.type(torch.float), M, k=2, inverse= True)
-    
-    
+
+    if transpose_flag:
+        Aout = _TransposeTensorM(Aout, M)
+
     return Aout.type(torch.float)
     
     
