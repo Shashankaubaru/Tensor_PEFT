@@ -49,9 +49,6 @@ a random orthogonal `M`, or a learned `M` is statistically indistinguishable fro
 | `transformation_matrices.py` | Orthogonal transforms `M`: DCT, DFT, random orthogonal |
 | `tSVD.py` | Tensor SVD (t-SVD) and projector construction |
 | `tSVD_M.py` | Tensor SVD under an arbitrary orthogonal `M` (tSVD-M) |
-| `tensorPOD.py`, `tensorPOD_M.py` | Tensor proper orthogonal decomposition built on t-SVD / tSVD-M |
-| `Tucker_projector.py` | Truncated Tucker projector |
-| `utils.py` | Placeholder (empty) |
 | `__init__.py` | Exports `modek_product`, `mprod`, `facewise`, `dct_matrix`, `random_orthogonal`, ... |
 
 ### `python_code/` — method implementation
@@ -86,17 +83,11 @@ a random orthogonal `M`, or a learned `M` is statistically indistinguishable fro
 | `collect_ablations.py` | Aggregate the CoLA ablations and the RTE learning-rate check |
 | `collect_regimes.py` | Aggregate the "regimes where coupling could matter" runs (small adapters, larger datasets, deeper models) |
 
-### `python_code/` — earlier exploration / legacy
+### `python_code/` — tests
 
 | File | Description |
 |---|---|
 | `TSVD_test.py`, `TSVD_M_test.py` | Tests of t-SVD / tSVD-M on stacked attention weight tensors (expect `tensor_Q.pt`) |
-| `CP_test.py`, `Tucker_test.py` | CP and Tucker decompositions of stacked weight tensors (expect `tensor.pt`) |
-| `utils.py` | Helper plotting / unfolding utilities for the tests above |
-| `main.py` | Load an LLM and inspect its parameters |
-| `vanilla_attention_bert.py` | Baseline BERT attention classifier on IMDB reviews |
-| `HyperCube_low_rank_demo.ipynb` | Low-rank structure via weight decay on a HyperCube model |
-| `Untitled.ipynb`, `Untitled1.ipynb` | Scratch notebooks (IMDB loading, weight SVD inspection) |
 
 ## Setup
 

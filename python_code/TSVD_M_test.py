@@ -2,7 +2,6 @@ import torch
 import numpy as np
 from tensor_utils import tSVD_M, transformation_matrices
 import tensorly as tl
-from utils import *
 tl.set_backend('pytorch')
 
 
